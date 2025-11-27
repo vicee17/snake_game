@@ -1,14 +1,3 @@
-"""
-Игра 'Змейка' на PyQt6
-Требования лабораторной работы:
-- Главное меню при запуске
-- Настройка размера окна
-- Обратный отсчёт перед стартом
-- Змейка не проходит сквозь стены
-- Гладкая змейка с глазами, круглое яблоко, сетка
-- Обработка исключений
-"""
-
 import sys
 import random
 from PyQt6.QtWidgets import (
@@ -21,7 +10,6 @@ from PyQt6.QtGui import (
 )
 
 
-# Константы
 CELL_SIZE = 20
 GAME_SPEED_MS = 150
 
@@ -336,7 +324,6 @@ class MainWindow(QMainWindow):
         self.setup_game_menu()
 
     def setup_game_menu(self):
-        """Создаёт меню с тремя пунктами, включая 'В главное меню'."""
         self.menu_bar.clear()
         game_menu = self.menu_bar.addMenu("Игра")
 
