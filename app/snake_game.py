@@ -4,15 +4,13 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QLabel,
     QMessageBox, QDialog, QPushButton, QComboBox, QHBoxLayout
 )
-from PyQt6.QtCore import Qt, QTimer, QRect
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import (
     QPainter, QColor, QFont, QAction, QPainterPath, QPen
 )
 
-
 CELL_SIZE = 20
 GAME_SPEED_MS = 150
-
 
 class SettingsDialog(QDialog):
     def __init__(self, current_width: int, current_height: int, parent=None):
@@ -47,7 +45,6 @@ class SettingsDialog(QDialog):
         text = self.combo.currentText()
         w, h = map(int, text.split(" x "))
         return w, h
-
 
 class SnakeGameWidget(QWidget):
     def __init__(self, parent=None):
@@ -112,7 +109,6 @@ class SnakeGameWidget(QWidget):
         dx, dy = self.direction
         new_head = (head_x + dx, head_y + dy)
 
-        # Проверка стен
         if (new_head[0] < 0 or new_head[0] >= self.width() or
             new_head[1] < 0 or new_head[1] >= self.height()):
             self.game_over = True
@@ -120,7 +116,6 @@ class SnakeGameWidget(QWidget):
             self.update()
             return
 
-        # Проверка самостолкновения
         if new_head in self.snake:
             self.game_over = True
             self.timer.stop()
@@ -231,7 +226,6 @@ class SnakeGameWidget(QWidget):
 
           painter.fillRect(self.rect(), QColor(0, 0, 0))
 
-          # Сетка
           grid_color = QColor(50, 50, 50)
           painter.setPen(grid_color)
           for x in range(0, self.width(), CELL_SIZE):
@@ -239,7 +233,6 @@ class SnakeGameWidget(QWidget):
           for y in range(0, self.height(), CELL_SIZE):
               painter.drawLine(0, y, self.width(), y)
 
-          # Экран проигрыша — ТОЛЬКО если реально game_over И отсчёт не идёт
           if self.game_over and self.countdown == 0:
               painter.setPen(QColor(255, 50, 50))
               painter.setFont(QFont("Arial", 20))
@@ -247,7 +240,6 @@ class SnakeGameWidget(QWidget):
               painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, text)
               return
 
-          # Обратный отсчёт
           if self.countdown > 0:
               painter.setPen(QColor(255, 255, 0))
               painter.setFont(QFont("Arial", 48, QFont.Weight.Bold))
@@ -265,7 +257,6 @@ class SnakeGameWidget(QWidget):
               self._draw_score(painter)
               return
 
-          # Обычная игра
           self._draw_snake_and_food(painter)
           self._draw_score(painter)
 
@@ -327,17 +318,14 @@ class MainWindow(QMainWindow):
         self.menu_bar.clear()
         game_menu = self.menu_bar.addMenu("Игра")
 
-        # Новая игра
         restart_action = QAction("Новая игра", self)
         restart_action.triggered.connect(self.restart_game)
         game_menu.addAction(restart_action)
 
-        # Настройки
         settings_action = QAction("Настройки", self)
         settings_action.triggered.connect(self.open_settings_from_game)
         game_menu.addAction(settings_action)
 
-        # В главное меню — ОБЯЗАТЕЛЬНО ДОЛЖЕН БЫТЬ!
         main_menu_action = QAction("В главное меню", self)
         main_menu_action.triggered.connect(self.back_to_main_menu)
         game_menu.addAction(main_menu_action)
@@ -367,20 +355,14 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Ошибка", f"Не удалось применить настройки:\n{e}")
 
     def back_to_main_menu(self):
-        # Останавливаем таймеры игры
         if self.game_widget:
             if self.game_widget.timer:
                 self.game_widget.timer.stop()
             if self.game_widget.countdown_timer:
                 self.game_widget.countdown_timer.stop()
 
-        # Скрываем игровое меню
         self.menu_bar.setVisible(False)
-
-        # Удаляем текущий центральный виджет
         self.setCentralWidget(None)
-
-        # Создаём новый виджет для главного меню
         self.stack = QWidget()
         self.setCentralWidget(self.stack)
         self.setup_menu()
@@ -394,7 +376,6 @@ def main():
     except Exception as e:
         QMessageBox.critical(None, "Критическая ошибка", f"Программа завершена с ошибкой:\n{e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()
